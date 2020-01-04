@@ -1,4 +1,7 @@
 import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
+import time
 
 '''
 @Author: wallfacer (Yanhan Zhang)
@@ -10,7 +13,7 @@ class CellsMachine:
     def __init__(self, dim=20):
         self.dim = dim
         self.map_matrix = self.map_generate()
-        self.text_print_map()
+        self.img = plt.imshow(self.map_matrix, cmap='gray_r')
 
     def map_generate(self):
         map_matrix = np.random.random([self.dim, self.dim])
@@ -36,7 +39,7 @@ class CellsMachine:
                     neighbors += 1
         return neighbors
 
-    def iter_step(self):
+    def iter_step(self, step):
         new_map = np.zeros([self.dim, self.dim])
         for i in range(self.dim):
             for j in range(self.dim):
@@ -47,7 +50,8 @@ class CellsMachine:
                     if self.count_neighbor((i, j)) == 3:
                         new_map[i][j] = 1
         self.map_matrix = new_map
-        self.text_print_map()
+        self.img.set_data(new_map)
+        return self.img
 
     def text_print_map(self):
         for i in range(self.map_matrix.shape[0]):
@@ -58,6 +62,7 @@ class CellsMachine:
 
 
 if __name__ == '__main__':
-    machine = CellsMachine(10)
-    for i in range(10):
-        machine.iter_step()
+    fig, ax = plt.subplots()
+    machine = CellsMachine(100)
+    ani = FuncAnimation(fig, machine.iter_step, interval=1)
+    plt.show()
