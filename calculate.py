@@ -1,7 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
-import time
+import argparse
+
 
 '''
 @Author: wallfacer (Yanhan Zhang)
@@ -10,15 +11,16 @@ import time
 
 
 class CellsMachine:
-    def __init__(self, dim=20):
+    def __init__(self, dim=20, prob=0.2):
         self.dim = dim
+        self.prob = 1 - prob
         self.map_matrix = self.map_generate()
         self.img = plt.imshow(self.map_matrix, cmap='gray_r')
 
     def map_generate(self):
         map_matrix = np.random.random([self.dim, self.dim])
-        map_matrix[map_matrix >= 0.8] = 1
-        map_matrix[map_matrix < 0.8] = 0
+        map_matrix[map_matrix >= self.prob] = 1
+        map_matrix[map_matrix < self.prob] = 0
         return map_matrix
 
     @staticmethod
@@ -62,7 +64,13 @@ class CellsMachine:
 
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Conway\'s Life Game')
+    parser.add_argument('-d', '--dim', default='100')
+    parser.add_argument('-p', '--prob', default='0.2')
+    args = parser.parse_args()
+    dim = int(args.dim)
+    prob = float(args.prob)
     fig, ax = plt.subplots()
-    machine = CellsMachine(100)
+    machine = CellsMachine(dim, prob)
     ani = FuncAnimation(fig, machine.iter_step, interval=1)
     plt.show()
